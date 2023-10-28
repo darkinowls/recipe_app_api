@@ -10,11 +10,11 @@ WORKDIR /app
 EXPOSE 8000
 
 ARG DEV=false
-RUN python -m venv ./venv && \
-    ./venv/bin/pip install --upgrade pip && \
-    ./venv/bin/pip install -r /tmp/requirements.txt && \
+RUN python -m venv /.venv && \
+    /.venv/bin/pip install --upgrade pip && \
+    /.venv/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ] ; \
-      then ./venv/bin/pip install -r /tmp/requirements.dev.txt ;  \
+      then /.venv/bin/pip install -r /tmp/requirements.dev.txt ;  \
     fi && \
     rm -rf /tmp && \
     adduser \
@@ -22,6 +22,6 @@ RUN python -m venv ./venv && \
         --no-create-home \
         django_user
 
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH="/.venv/bin:$PATH"
 
 USER django_user
