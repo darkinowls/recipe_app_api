@@ -1,5 +1,5 @@
 from django.db.models import QuerySet
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -28,6 +28,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return serializers.RecipeSerializer
         return self.serializer_class
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: serializers.RecipeSerializer):
         """Create a new recipe"""
         serializer.save(user=self.request.user)
+
+
+class TagViewSet(mixins.ListModelMixin,
+                 mixins.UpdateModelMixin,
+                 mixins.DestroyModelMixin,
+                 viewsets.GenericViewSet):
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = serializers.TagSerializer
+    queryset: QuerySet = models.Tag.objects.all()
+
+    def get_queryset(self):
+        """Return objects for the current authenticated user only"""
+        return self.queryset.filter(user=self.request.user).order_by("-name")
