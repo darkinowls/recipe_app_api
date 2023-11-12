@@ -1,3 +1,5 @@
+from abc import ABC
+
 from django.db.models import QuerySet
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
@@ -33,26 +35,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class TagViewSet(mixins.ListModelMixin,
-                 mixins.UpdateModelMixin,
-                 mixins.DestroyModelMixin,
-                 viewsets.GenericViewSet):
+class BaseRecipeAttrViewSet(mixins.ListModelMixin,
+                            mixins.UpdateModelMixin,
+                            mixins.DestroyModelMixin,
+                            viewsets.GenericViewSet,
+                            ABC):
+    """Base viewset for user owned recipe attributes"""
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user).order_by("-name")
+
+
+class TagViewSet(BaseRecipeAttrViewSet):
     serializer_class = serializers.TagSerializer
     queryset: QuerySet = models.Tag.objects.all()
 
-    def get_queryset(self):
-        """Return objects for the current authenticated user only"""
-        return self.queryset.filter(user=self.request.user).order_by("-name")
 
-
-class IngredientViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication, ]
-    permission_classes = [IsAuthenticated, ]
+class IngredientViewSet(BaseRecipeAttrViewSet):
     serializer_class = serializers.IngredientSerializer
     queryset: QuerySet = models.Ingredient.objects.all()
-
-    def get_queryset(self):
-        """Return objects for the current authenticated user only"""
-        return self.queryset.filter(user=self.request.user).order_by("-name")
