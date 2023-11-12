@@ -45,3 +45,14 @@ class TagViewSet(mixins.ListModelMixin,
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
         return self.queryset.filter(user=self.request.user).order_by("-name")
+
+
+class IngredientViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = serializers.IngredientSerializer
+    queryset: QuerySet = models.Ingredient.objects.all()
+
+    def get_queryset(self):
+        """Return objects for the current authenticated user only"""
+        return self.queryset.filter(user=self.request.user).order_by("-name")
