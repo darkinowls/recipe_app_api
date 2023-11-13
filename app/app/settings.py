@@ -24,7 +24,11 @@ SECRET_KEY = 'django-insecure-55#r%$ue5ova93ig9c2#7jpr#d*&+u^q%(f1o2tx%rt(3h^l-s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+# CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'core',
+    "corsheaders",
     'drf_spectacular',
     'user',
     'recipe'
@@ -48,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

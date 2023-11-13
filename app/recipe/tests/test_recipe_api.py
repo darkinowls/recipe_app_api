@@ -310,6 +310,63 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(recipe.ingredients.count(), 0)
         self.assertNotIn(i1, recipe.ingredients.all())
 
+    def test_filter_by_tags_self(self):
+        recipe1 = create_recipe(user=self.user,
+                                title="First",
+                                time_minutes=10,
+                                price=Decimal(5.00))
+        recipe2 = create_recipe(user=self.user,
+                                title="Second",
+                                time_minutes=10,
+                                price=Decimal(5.00))
+        tag1 = Tag.objects.create(user=self.user, name="Breakfast")
+        tag2 = Tag.objects.create(user=self.user, name="Lunch")
+        recipe1.tags.add(tag1)
+        recipe2.tags.add(tag2)
+        recipe3 = create_recipe(user=self.user,
+                                title="Third",
+                                time_minutes=10,
+                                price=Decimal(5.00))
+        res = self.client.get(RECIPES_URL, {"tags": f"{tag1.id},{tag2.id}"})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 2)
+        self.assertNotIn(RecipeSerializer(recipe3).data, res.data)
+        self.assertIn(RecipeSerializer(recipe2).data, res.data)
+        self.assertIn(RecipeSerializer(recipe1).data, res.data)
+
+    def test_filter_by_ingredients_self(self):
+        recipe1 = create_recipe(user=self.user,
+                                title="First",
+                                time_minutes=10,
+                                price=Decimal(5.00))
+        recipe2 = create_recipe(user=self.user,
+                                title="Second",
+                                time_minutes=10,
+                                price=Decimal(5.00))
+        i1 = Ingredient.objects.create(user=self.user, name="Salt")
+        i2 = Ingredient.objects.create(user=self.user, name="Pepper")
+        recipe1.ingredients.add(i1)
+        recipe2.ingredients.add(i2)
+        recipe3 = create_recipe(user=self.user,
+                                title="Third",
+                                time_minutes=10,
+                                price=Decimal(5.00))
+        res = self.client.get(RECIPES_URL, {"ingredients": f"{i1.id},{i2.id}"})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 2)
+        self.assertNotIn(RecipeSerializer(recipe3).data, res.data)
+        self.assertIn(RecipeSerializer(recipe2).data, res.data)
+        self.assertIn(RecipeSerializer(recipe1).data, res.data)
+
+    def test_filter_error(self):
+        recipe1 = create_recipe(user=self.user,
+                                title="First",
+                                time_minutes=10,
+                                price=Decimal(5.00))
+        res = self.client.get(RECIPES_URL, {"tags": "AMOGUS"})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 1)
+
 
 class ImageUploadTests(TestCase):
     def setUp(self):
