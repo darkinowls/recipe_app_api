@@ -12,8 +12,8 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - SECRET_KEY=${DJANGO_SECRET_KEY}
-      - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
       - DEBUG=0
     depends_on:
       - db
@@ -34,7 +34,7 @@ services:
     depends_on:
       - app
     ports:
-      - "8000:8000"
+      - "1111:8000"
     volumes:
       - static-data:/vol/static
 

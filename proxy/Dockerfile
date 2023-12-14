@@ -19,6 +19,8 @@ RUN chmod +x /run.sh
 
 VOLUME /vol/static
 
+COPY favicon.ico /vol/static/images/favicon.ico
+
 USER nginx
 
 CMD /run.sh
