@@ -357,9 +357,9 @@ class PrivateRecipeApiTests(TestCase):
 
     def test_filter_error(self):
         create_recipe(user=self.user,
-                                title="First",
-                                time_minutes=10,
-                                price=Decimal(5.00))
+                      title="First",
+                      time_minutes=10,
+                      price=Decimal(5.00))
         res = self.client.get(RECIPES_URL, {"tags": "AMOGUS"})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
