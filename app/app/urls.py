@@ -20,6 +20,8 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+import core.views
+
 urlpatterns = [
     path('', RedirectView.as_view(url='api/docs/')),
     # path('favicon.ico', RedirectView.as_view(url='api/docs/')),
@@ -29,6 +31,7 @@ urlpatterns = [
          SpectacularSwaggerView.as_view(), name="api_docs"),
     path('api/user/', include('user.urls')),
     path('api/recipe/', include('recipe.urls')),
+    path('health/', core.views.get_health_check_view, name='health'),
 ]
 
 if settings.DEBUG:

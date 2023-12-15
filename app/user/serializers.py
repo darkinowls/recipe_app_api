@@ -1,9 +1,7 @@
-from typing import Dict
-
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-from django.utils.translation import ugettext_lazy as _
 
 
 class UserSerializer(serializers.ModelSerializer):

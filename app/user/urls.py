@@ -9,5 +9,3 @@ urlpatterns = [
     path('token/', CreateTokenView.as_view(), name='token'),
     path('me/', ManageUsersView.as_view(), name='me'),
 ]
-
-

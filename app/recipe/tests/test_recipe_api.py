@@ -12,10 +12,9 @@ from rest_framework.test import APIClient
 from core.models import Recipe, Tag, Ingredient
 from core.models import User
 from recipe.serializers import RecipeSerializer, RecipeDetailSerializer
+from PIL import Image
 
 RECIPES_URL = reverse('recipe:recipe-list')
-
-from PIL import Image
 
 
 def detail_url(recipe_id: int):
@@ -61,7 +60,6 @@ class PrivateRecipeApiTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        factory: User = get_user_model()
 
         self.user = create_user(email="user123@example.com",
                                 password="testpass", )
@@ -81,7 +79,6 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_recipes_limited_to_user(self):
-        factory: User = get_user_model()
         other = create_user(email="limit@example.com",
                             password="testpass", )
         create_recipe(user=other)
@@ -359,7 +356,7 @@ class PrivateRecipeApiTests(TestCase):
         self.assertIn(RecipeSerializer(recipe1).data, res.data)
 
     def test_filter_error(self):
-        recipe1 = create_recipe(user=self.user,
+        create_recipe(user=self.user,
                                 title="First",
                                 time_minutes=10,
                                 price=Decimal(5.00))

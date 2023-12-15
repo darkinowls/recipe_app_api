@@ -1,10 +1,11 @@
 from abc import ABC
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiTypes
+
 from django.db.models import QuerySet
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiTypes
 from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 
 from core import models
@@ -22,7 +23,8 @@ from recipe import serializers
                              description="Filter recipes by tags. Enter comma seperated values in GET request"),
             OpenApiParameter("ingredients",
                              type=OpenApiTypes.STR,
-                             description="Filter recipes by ingredients id. Enter comma seperated values in GET request"),
+                             description="Filter recipes by ingredients id. " +
+                                         "Enter comma seperated values in GET request"),
         ],
     ),
 )
@@ -44,11 +46,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
-        tags: str | None = self.request.query_params.get('tags')
-        ingredients: str | None = self.request.query_params.get('ingredients')
+        tags_or_none: str = self.request.query_params.get('tags')
+        ingredients_or_none: str = self.request.query_params.get('ingredients')
 
-        tags_ids: frozenset[int] = self.__params_to_ints(tags)
-        ingredients_ids: frozenset[int] = self.__params_to_ints(ingredients)
+        tags_ids: frozenset[int] = self.__params_to_ints(tags_or_none)
+        ingredients_ids: frozenset[int] = self.__params_to_ints(ingredients_or_none)
 
         queryset = self.queryset
         if len(tags_ids) != 0:
