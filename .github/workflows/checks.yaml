@@ -5,7 +5,9 @@ on: [ push ]
 
 
 jobs:
+
   test-lint:
+    permissions: write-all
     name: Test and Lint
     #   ubuntu has docker compose
     runs-on: ubuntu-latest
