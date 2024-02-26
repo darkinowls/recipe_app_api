@@ -1,14 +1,14 @@
 ---
 name: Checks
 
-on: [push]
+on: [ push ]
 
 
 jobs:
   test-lint:
     name: Test and Lint
-#   ubuntu has docker compose
-    runs-on: ubuntu-20.04
+    #   ubuntu has docker compose
+    runs-on: ubuntu-latest
     steps:
       - name: Login to Docker
         # to use docker compose inside the free container
@@ -16,11 +16,18 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Game
-        run: echo "Hello Github"
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#      - name: Test
-#        run: docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
-#      - name: Lint
-#        run: docker-compose run --rm app sh -c "flake8"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python-3.9@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_ID }}
+
+      - name: Test
+        run: docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
+
+      - name: Lint
+        run: docker-compose run --rm app sh -c "flake8"
