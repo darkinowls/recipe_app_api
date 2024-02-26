@@ -33,12 +33,17 @@ services:
     restart: always
     depends_on:
       - app
+    environment:
+      - HOST=${HOST}
     ports:
-      - "80:8000"
+      - "443:443"
+      - "80:80"
     volumes:
+      - certs:/certs
       - static-data:/vol/static
 
 volumes:
   db_data:
   static-data:
+  certs:
 
